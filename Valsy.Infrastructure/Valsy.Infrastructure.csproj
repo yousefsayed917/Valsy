@@ -19,4 +19,9 @@
     <ProjectReference Include="..\Valsy.Application\Valsy.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Repository.cs" />
+    <Compile Remove="ValsyDbContext.cs" />
+  </ItemGroup>
+
 </Project>

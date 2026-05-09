@@ -34,10 +34,16 @@ namespace Valsy.Infrastructure.EntityConfigurations
                 .IsConcurrencyToken();
 
             builder.HasMany(p => p.Variants)
-                .WithOne()
+                .WithOne(v => v.Product)
                 .HasForeignKey(v => v.ProductId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(p => p.OrderItems)
+                .WithOne(i => i.Product)
+                .HasForeignKey(i => i.ProductId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

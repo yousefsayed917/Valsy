@@ -6,6 +6,8 @@ public class ProductVariant : AggregateRoot
     public string Color { get; private set; } = string.Empty;
     public int Stock { get; private set; }
     public Guid ProductId { get; private set; }
+    public Product Product { get; private set; } = default!;
+    public List<OrderItem> OrderItems { get; private set; } = new();
 
     private ProductVariant() { }
 

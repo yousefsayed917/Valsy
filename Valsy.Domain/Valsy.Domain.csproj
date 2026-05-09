@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Abstractions\AggregateRoot.cs" />
+    <Compile Remove="Abstractions\AuditableEntity.cs" />
+    <Compile Remove="Abstractions\Entity.cs" />
+    <Compile Remove="Abstractions\IDomainEvent.cs" />
+    <Compile Remove="Abstractions\IRepository.cs" />
+    <Compile Remove="Entities\Product.cs" />
+    <Compile Remove="Entities\ProductVariant.cs" />
+  </ItemGroup>
+
 </Project>

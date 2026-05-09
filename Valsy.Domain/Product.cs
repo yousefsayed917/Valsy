@@ -7,6 +7,7 @@ public class Product : AggregateRoot
     public decimal Price { get; private set; }
 
     public List<ProductVariant> Variants { get; private set; } = new();
+    public List<OrderItem> OrderItems { get; private set; } = new();
 
     private Product() { }
 
