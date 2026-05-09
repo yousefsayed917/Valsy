@@ -4,7 +4,7 @@
     {
         Task SaveChangesAsync();
         Task AddAsync(T entity);
-        Task<T> GetByIdAsync(Guid id);
+        Task<T?> GetByIdAsync(Guid id);
         Task<List<T>> GetAllAsync();
         Task Update(T entity);
 

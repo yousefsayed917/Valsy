@@ -17,7 +17,7 @@ namespace Valsy.Infrastructure
             await _context.Set<T>().AddAsync(entity);
         }
 
-        public async Task<T> GetByIdAsync(Guid id)
+        public async Task<T?> GetByIdAsync(Guid id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
