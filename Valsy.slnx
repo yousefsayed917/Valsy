@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Valsy.Api/Valsy.Api.csproj" />
+  <Project Path="Valsy.Application/Valsy.Application.csproj" />
+  <Project Path="Valsy.Domain/Valsy.Domain.csproj" />
+  <Project Path="Valsy.Infrastructure/Valsy.Infrastructure.csproj" />
+</Solution>
