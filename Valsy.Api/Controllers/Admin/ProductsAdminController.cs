@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Valsy.Application.Products.Commands.CreateProduct;
 using Valsy.Application.Products.Commands.CreateProductVariant;
+using Valsy.Application.Products.Commands.AdjustStock;
+using Valsy.Application.Products.Queries.GetProducts;
 
 namespace Valsy.Api.Controllers.Admin;
 
@@ -17,9 +19,10 @@ public class ProductsAdminController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] string? searchTerm, CancellationToken cancellationToken)
     {
-        return Ok(new { message = "Admin products endpoint is ready." });
+        var products = await _sender.Send(new GetProductsQuery(searchTerm), cancellationToken);
+        return Ok(products);
     }
 
     [HttpPost]
@@ -50,6 +53,17 @@ public class ProductsAdminController : ControllerBase
         return Ok(new { variantId });
     }
 
+    [HttpPut("variants/{variantId:guid}/stock")]
+    public async Task<IActionResult> AdjustStock(
+        Guid variantId,
+        [FromBody] AdjustStockRequest request,
+        CancellationToken cancellationToken)
+    {
+        await _sender.Send(new AdjustStockCommand(variantId, request.NewStock, request.RequestedBy), cancellationToken);
+        return NoContent();
+    }
+
     public record CreateProductRequest(string Name, string Description, decimal Price, string RequestedBy);
     public record CreateProductVariantRequest(string Size, string Color, int Stock, string RequestedBy);
+    public record AdjustStockRequest(int NewStock, string RequestedBy);
 }

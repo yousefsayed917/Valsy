@@ -19,4 +19,10 @@ public abstract class AuditableEntity
         LastModifiedAt = DateTime.UtcNow;
         LastModifiedBy = modifiedBy;
     }
+
+    public void MarkAsDeleted(string deletedBy)
+    {
+        IsDeleted = true;
+        SetModificationAudit(deletedBy);
+    }
 }

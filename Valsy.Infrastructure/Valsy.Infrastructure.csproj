@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -19,9 +19,6 @@
     <ProjectReference Include="..\Valsy.Application\Valsy.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Repository.cs" />
-    <Compile Remove="ValsyDbContext.cs" />
-  </ItemGroup>
+
 
 </Project>
