@@ -1,9 +1,10 @@
 using MediatR;
+using Valsy.Application.Requests;
 
 namespace Valsy.Application.Products.Commands.CreateProduct;
 
-public record CreateProductCommand(
-    string Name,
-    string Description,
-    decimal Price,
-    string RequestedBy) : IRequest<Guid>;
+public record CreateProductCommand : IRequest<int>
+{
+    public UpsertProductRequest productRequest { get; set; }
+}
+

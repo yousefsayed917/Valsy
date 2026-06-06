@@ -1,32 +1,28 @@
+using AutoMapper;
 using MediatR;
-using Valsy.Application.Common.Interfaces;
-using Valsy.Domain;
+using Valsy.Domain.Customers;
+using Valsy.Domain.Customers.Repository;
 
 namespace Valsy.Application.Customers.Commands.CreateCustomer;
 
 public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, int>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IMapper _mapper;
 
-    public CreateCustomerCommandHandler(IApplicationDbContext dbContext)
+    public CreateCustomerCommandHandler(ICustomerRepository customerRepository, IMapper mapper)
     {
-        _dbContext = dbContext;
+        _customerRepository = customerRepository;
+        _mapper = mapper;
     }
 
     public async Task<int> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
-        var customer = Customer.Create(
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.PhoneNumber,
-            request.AddressLine1,
-            request.City,
-            request.Country);
+        Customer customer = _mapper.Map<Customer>(request);
+        customer.Create(customer);
 
-        await _dbContext.Customers.AddAsync(customer, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
+        await _customerRepository.AddAsync(customer);
+        await _customerRepository.SaveChangesAsync();
         return customer.Id;
     }
 }

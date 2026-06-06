@@ -17,7 +17,7 @@ public class SubmitOrderCommandHandler : IRequestHandler<SubmitOrderCommand>
     {
         var order = await _dbContext.Orders
             .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken)
+            .FirstOrDefaultAsync(o => o.Id == request.OrderId)
             ?? throw new InvalidOperationException("Order not found.");
 
         order.Submit(request.RequestedBy);

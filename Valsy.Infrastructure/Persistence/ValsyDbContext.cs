@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using Valsy.Application.Common.Interfaces;
-using Valsy.Domain;
+using Valsy.Domain.Common;
+using Valsy.Domain.Customers;
+using Valsy.Domain.Orders;
+using Valsy.Domain.Products;
 
 namespace Valsy.Infrastructure;
 

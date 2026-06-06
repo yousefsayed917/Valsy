@@ -2,7 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Valsy.Application.Common.Interfaces;
-using Valsy.Domain;
+using Valsy.Domain.Common.Abstractions;
+using Valsy.Infrastructure.Common.Repositories;
 
 namespace Valsy.Infrastructure;
 

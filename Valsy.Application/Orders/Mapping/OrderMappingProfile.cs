@@ -1,6 +1,6 @@
 using AutoMapper;
 using Valsy.Application.Orders.Dtos;
-using Valsy.Domain;
+using Valsy.Domain.Orders;
 
 namespace Valsy.Application.Orders.Mapping;
 

@@ -7,13 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Abstractions\AggregateRoot.cs" />
-    <Compile Remove="Abstractions\AuditableEntity.cs" />
-    <Compile Remove="Abstractions\Entity.cs" />
-    <Compile Remove="Abstractions\IDomainEvent.cs" />
-    <Compile Remove="Abstractions\IRepository.cs" />
+    <Compile Remove="Common\Abstractions\AggregateRoot.cs" />
+    <Compile Remove="Common\Abstractions\AuditableEntity.cs" />
+    <Compile Remove="Common\Abstractions\Entity.cs" />
+    <Compile Remove="Common\Abstractions\IDomainEvent.cs" />
     <Compile Remove="Entities\Product.cs" />
     <Compile Remove="Entities\ProductVariant.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
 </Project>

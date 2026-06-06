@@ -4,6 +4,7 @@ using Valsy.Application.Products.Commands.CreateProduct;
 using Valsy.Application.Products.Commands.CreateProductVariant;
 using Valsy.Application.Products.Commands.AdjustStock;
 using Valsy.Application.Products.Queries.GetProducts;
+using Valsy.Application.Requests;
 
 namespace Valsy.Api.Controllers.Admin;
 
@@ -26,10 +27,10 @@ public class ProductsAdminController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateProductRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] UpsertProductRequest request, CancellationToken cancellationToken)
     {
         var productId = await _sender.Send(
-            new CreateProductCommand(request.Name, request.Description, request.Price, request.RequestedBy),
+            new CreateProductCommand(request),
             cancellationToken);
 
         return Ok(new { productId });
@@ -62,8 +63,4 @@ public class ProductsAdminController : ControllerBase
         await _sender.Send(new AdjustStockCommand(variantId, request.NewStock, request.RequestedBy), cancellationToken);
         return NoContent();
     }
-
-    public record CreateProductRequest(string Name, string Description, decimal Price, string RequestedBy);
-    public record CreateProductVariantRequest(string Size, string Color, int Stock, string RequestedBy);
-    public record AdjustStockRequest(int NewStock, string RequestedBy);
 }

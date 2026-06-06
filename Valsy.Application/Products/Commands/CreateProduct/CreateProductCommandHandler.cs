@@ -1,28 +1,28 @@
+using AutoMapper;
 using MediatR;
-using Valsy.Application.Common.Interfaces;
-using Valsy.Domain;
+using Valsy.Domain.Products;
+using Valsy.Domain.Products.Repository;
 
 namespace Valsy.Application.Products.Commands.CreateProduct;
 
-public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Guid>
+public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, int>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductRepository _productRepository;
+    private readonly IMapper _mapper;
 
-    public CreateProductCommandHandler(IApplicationDbContext dbContext)
+    public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
     {
-        _dbContext = dbContext;
+        _productRepository = productRepository;
+        _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var product = Product.Create(
-            request.Name,
-            request.Description,
-            request.Price,
-            request.RequestedBy);
+        Product product = _mapper.Map<Product>(request);
+        product.Create(product);
 
-        await _dbContext.Products.AddAsync(product, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _productRepository.AddAsync(product);
+        await _productRepository.SaveChangesAsync();
 
         return product.Id;
     }

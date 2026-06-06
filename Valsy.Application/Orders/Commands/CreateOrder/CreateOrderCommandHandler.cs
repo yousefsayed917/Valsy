@@ -1,6 +1,6 @@
 using MediatR;
 using Valsy.Application.Common.Interfaces;
-using Valsy.Domain;
+using Valsy.Domain.Orders;
 
 namespace Valsy.Application.Orders.Commands.CreateOrder;
 

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Valsy.Domain;
+using Valsy.Domain.Orders;
 
 namespace Valsy.Infrastructure.EntityConfigurations
 {
