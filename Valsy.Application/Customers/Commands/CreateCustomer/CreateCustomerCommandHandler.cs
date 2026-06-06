@@ -4,7 +4,7 @@ using Valsy.Domain;
 
 namespace Valsy.Application.Customers.Commands.CreateCustomer;
 
-public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, Guid>
+public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, int>
 {
     private readonly IApplicationDbContext _dbContext;
 
@@ -13,7 +13,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
         _dbContext = dbContext;
     }
 
-    public async Task<Guid> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
     {
         var customer = Customer.Create(
             request.FirstName,
@@ -22,8 +22,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             request.PhoneNumber,
             request.AddressLine1,
             request.City,
-            request.Country,
-            request.RequestedBy);
+            request.Country);
 
         await _dbContext.Customers.AddAsync(customer, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);

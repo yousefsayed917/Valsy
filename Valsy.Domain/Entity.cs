@@ -1,40 +1,97 @@
+using Valsy.Domain.Exceptions;
+
 namespace Valsy.Domain;
 
-public abstract class Entity<TId> : AuditableEntity
-    where TId : IEquatable<TId>
+public abstract class Entity : Entity<int>
 {
-    public TId Id { get; protected set; } = default!;
 
-    public bool IsTransient() => EqualityComparer<TId>.Default.Equals(Id, default!);
+}
 
-    public override bool Equals(object? obj)
+public abstract class Entity<TId> : AuditableEntity, IEntity<TId>
+{
+    public TId Id { get; protected set; }
+    private bool IsFetched;
+
+
+    int? _requestedHashCode;
+
+    public bool IsTransient()
     {
-        if (obj is not Entity<TId> other)
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        if (GetType() != other.GetType())
-        {
-            return false;
-        }
-
-        if (IsTransient() || other.IsTransient())
-        {
-            return false;
-        }
-
-        return EqualityComparer<TId>.Default.Equals(Id, other.Id);
+        return Id.Equals(default(TId));
     }
 
-    public override int GetHashCode() => IsTransient() ? base.GetHashCode() : HashCode.Combine(GetType(), Id);
+    public override bool Equals(object obj)
+    {
+        if (obj == null || !(obj is Entity<TId>))
+            return false;
 
-    public static bool operator ==(Entity<TId>? left, Entity<TId>? right) => Equals(left, right);
+        if (ReferenceEquals(this, obj))
+            return true;
 
-    public static bool operator !=(Entity<TId>? left, Entity<TId>? right) => !(left == right);
+        if (GetType() != obj.GetType())
+            return false;
+
+        Entity<TId> item = (Entity<TId>)obj;
+
+        if (item.IsTransient() || IsTransient())
+            return false;
+        else
+            return false;//return item == this;
+    }
+
+    public override int GetHashCode()
+    {
+        if (!IsTransient())
+        {
+            _requestedHashCode ??= Id.GetHashCode() ^ 31;
+
+            return _requestedHashCode.Value;
+        }
+        else
+            return base.GetHashCode();
+    }
+
+    public void SetIntId(int id)
+    {
+        if (typeof(TId) == typeof(int))
+            this.Id = (TId)(object)id;
+    }
+
+    public bool IsIdFetched()
+    {
+        return IsFetched;
+    }
+
+    public void FetchId()
+    {
+        this.IsFetched = true;
+    }
+
+    public static bool operator ==(Entity<TId> left, Entity<TId> right)
+    {
+        if (Equals(left, null))
+            return Equals(right, null) ? true : false;
+        else
+            return left.Equals(right);
+    }
+
+    public static bool operator !=(Entity<TId> left, Entity<TId> right)
+    {
+        return !(left == right);
+    }
+    protected static void CheckRule(IBusinessRule rule)
+    {
+        if (rule.IsBroken())
+        {
+            throw new BusinessRuleValidationException(rule);
+        }
+    }
+    protected static async Task CheckRuleAsync(IAsyncBusinessRule rule)
+    {
+        bool isBroken = await rule.IsBroken();
+        if (isBroken)
+        {
+            throw new BusinessRuleValidationException(rule);
+        }
+    }
 }

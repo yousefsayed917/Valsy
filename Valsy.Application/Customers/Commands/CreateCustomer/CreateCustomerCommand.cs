@@ -10,4 +10,4 @@ public record CreateCustomerCommand(
     string AddressLine1,
     string City,
     string Country,
-    string RequestedBy) : IRequest<Guid>;
+    string RequestedBy) : IRequest<int>;

@@ -4,7 +4,7 @@ using Valsy.Domain;
 
 namespace Valsy.Application.Orders.Commands.CreateOrder;
 
-public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int>
 {
     private readonly IApplicationDbContext _dbContext;
 
@@ -13,7 +13,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Gui
         _dbContext = dbContext;
     }
 
-    public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         var order = Order.Create(
             request.CustomerId,

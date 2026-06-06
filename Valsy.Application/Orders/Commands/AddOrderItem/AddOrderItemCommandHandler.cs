@@ -4,7 +4,7 @@ using Valsy.Application.Common.Interfaces;
 
 namespace Valsy.Application.Orders.Commands.AddOrderItem;
 
-public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, Guid>
+public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, int>
 {
     private readonly IApplicationDbContext _dbContext;
 
@@ -13,7 +13,7 @@ public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, G
         _dbContext = dbContext;
     }
 
-    public async Task<Guid> Handle(AddOrderItemCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(AddOrderItemCommand request, CancellationToken cancellationToken)
     {
         var order = await _dbContext.Orders
             .Include(o => o.Items)

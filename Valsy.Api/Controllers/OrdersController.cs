@@ -34,15 +34,15 @@ public class OrdersController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = orderId }, new { orderId });
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
         var order = await _sender.Send(new GetOrderByIdQuery(id), cancellationToken);
         return order is null ? NotFound() : Ok(order);
     }
 
-    [HttpPost("{id:guid}/items")]
-    public async Task<IActionResult> AddItem(Guid id, [FromBody] AddOrderItemRequest request, CancellationToken cancellationToken)
+    [HttpPost("{id:int}/items")]
+    public async Task<IActionResult> AddItem(int id, [FromBody] AddOrderItemRequest request, CancellationToken cancellationToken)
     {
         await _sender.Send(
             new AddOrderItemCommand(id, request.ProductId, request.ProductVariantId, request.Quantity, request.RequestedBy),
@@ -51,15 +51,15 @@ public class OrdersController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("{id:guid}/submit")]
-    public async Task<IActionResult> Submit(Guid id, [FromBody] SubmitOrderRequest request, CancellationToken cancellationToken)
+    [HttpPost("{id:int}/submit")]
+    public async Task<IActionResult> Submit(int id, [FromBody] SubmitOrderRequest request, CancellationToken cancellationToken)
     {
         await _sender.Send(new SubmitOrderCommand(id, request.RequestedBy), cancellationToken);
         return NoContent();
     }
 
     public record CreateOrderRequest(
-        Guid CustomerId,
+        int CustomerId,
         string ShippingAddressLine1,
         string ShippingCity,
         string ShippingCountry,
@@ -67,8 +67,8 @@ public class OrdersController : ControllerBase
         string RequestedBy);
 
     public record AddOrderItemRequest(
-        Guid ProductId,
-        Guid ProductVariantId,
+        int ProductId,
+        int ProductVariantId,
         int Quantity,
         string RequestedBy);
 

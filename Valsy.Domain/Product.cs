@@ -20,7 +20,6 @@ public class Product : AggregateRoot
             Price = price
         };
 
-        product.MarkCreated(Guid.NewGuid(), createdBy);
         return product;
     }
 
@@ -29,6 +28,5 @@ public class Product : AggregateRoot
         Name = name;
         Description = description;
         Price = price;
-        MarkModified(modifiedBy);
     }
 }

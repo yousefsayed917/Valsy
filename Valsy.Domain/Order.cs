@@ -2,7 +2,7 @@ namespace Valsy.Domain;
 
 public class Order : AggregateRoot
 {
-    public Guid CustomerId { get; private set; }
+    public int CustomerId { get; private set; }
     public Customer Customer { get; private set; } = default!;
     public OrderStatus Status { get; private set; }
     public string ShippingAddressLine1 { get; private set; } = string.Empty;
@@ -15,7 +15,7 @@ public class Order : AggregateRoot
     private Order() { }
 
     public static Order Create(
-        Guid customerId,
+        int customerId,
         string shippingAddressLine1,
         string shippingCity,
         string shippingCountry,
@@ -32,13 +32,12 @@ public class Order : AggregateRoot
             ContactPhone = contactPhone
         };
 
-        order.MarkCreated(Guid.NewGuid(), createdBy);
         return order;
     }
 
     public void AddItem(
-        Guid productId,
-        Guid productVariantId,
+        int productId,
+        int productVariantId,
         string productName,
         string size,
         string color,
@@ -78,7 +77,6 @@ public class Order : AggregateRoot
             existingItem.IncreaseQuantity(quantity, modifiedBy);
         }
 
-        MarkModified(modifiedBy);
     }
 
     public void Submit(string modifiedBy)
@@ -89,7 +87,6 @@ public class Order : AggregateRoot
         }
 
         Status = OrderStatus.Paid;
-        MarkModified(modifiedBy);
     }
 
     public void MarkAsShipped(string modifiedBy)
@@ -100,7 +97,6 @@ public class Order : AggregateRoot
         }
 
         Status = OrderStatus.Shipped;
-        MarkModified(modifiedBy);
     }
 
     public void MarkAsDelivered(string modifiedBy)
@@ -111,7 +107,6 @@ public class Order : AggregateRoot
         }
 
         Status = OrderStatus.Delivered;
-        MarkModified(modifiedBy);
     }
 
     public void Cancel(string modifiedBy)
@@ -122,6 +117,5 @@ public class Order : AggregateRoot
         }
 
         Status = OrderStatus.Cancelled;
-        MarkModified(modifiedBy);
     }
 }

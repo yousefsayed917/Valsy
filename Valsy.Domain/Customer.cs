@@ -20,8 +20,7 @@ public class Customer : AggregateRoot
         string phoneNumber,
         string addressLine1,
         string city,
-        string country,
-        string createdBy)
+        string country)
     {
         var customer = new Customer
         {
@@ -34,7 +33,6 @@ public class Customer : AggregateRoot
             Country = country
         };
 
-        customer.MarkCreated(Guid.NewGuid(), createdBy);
         return customer;
     }
 
@@ -44,8 +42,7 @@ public class Customer : AggregateRoot
         string phoneNumber,
         string addressLine1,
         string city,
-        string country,
-        string modifiedBy)
+        string country)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -53,7 +50,5 @@ public class Customer : AggregateRoot
         AddressLine1 = addressLine1;
         City = city;
         Country = country;
-
-        MarkModified(modifiedBy);
     }
 }

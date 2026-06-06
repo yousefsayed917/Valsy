@@ -44,9 +44,8 @@ namespace Valsy.Infrastructure.EntityConfigurations
             builder.Property(i => i.LastModifiedAt);
             builder.Property(i => i.LastModifiedBy).HasMaxLength(100);
 
-            builder.Property(i => i.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+            builder.Property(p => p.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
+
 
             builder.HasOne(i => i.Order)
                 .WithMany(o => o.Items)

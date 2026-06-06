@@ -4,8 +4,8 @@ namespace Valsy.Application.Orders.Dtos;
 
 public class OrderDto
 {
-    public Guid Id { get; set; }
-    public Guid CustomerId { get; set; }
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
     public OrderStatus Status { get; set; }
     public string ShippingAddressLine1 { get; set; } = string.Empty;
     public string ShippingCity { get; set; } = string.Empty;

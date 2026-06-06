@@ -3,9 +3,9 @@ using MediatR;
 namespace Valsy.Application.Orders.Commands.CreateOrder;
 
 public record CreateOrderCommand(
-    Guid CustomerId,
+    int CustomerId,
     string ShippingAddressLine1,
     string ShippingCity,
     string ShippingCountry,
     string ContactPhone,
-    string RequestedBy) : IRequest<Guid>;
+    string RequestedBy) : IRequest<int>;

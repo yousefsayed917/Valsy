@@ -2,32 +2,35 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Valsy.Domain;
 
-public abstract class AggregateRoot : AggregateRoot<Guid>
+public abstract class AggregateRoot : AggregateRoot<int>
 {
-}
 
-public abstract class AggregateRoot<TPrimaryKey> : Entity<TPrimaryKey>
-    where TPrimaryKey : IEquatable<TPrimaryKey>
+}
+public abstract class AggregateRoot<TPrimaryKey> : Entity<TPrimaryKey>, IAggregateRoot<TPrimaryKey>
 {
     [ConcurrencyCheck]
-    public byte[] RowVersion { get; protected set; } = Array.Empty<byte>();
+    public byte[] RowVersion { get; set; }
 
-    private readonly List<IDomainEvent> _domainEvents = new();
+    private List<IDomainEvent> _domainEvents;
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    /// <summary>
+    /// Domain events occurred.
+    /// </summary>
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents?.AsReadOnly();
 
-    public void ClearDomainEvents() => _domainEvents.Clear();
-
-    protected void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-
-    protected void MarkCreated(TPrimaryKey id, string createdBy)
+    public void ClearDomainEvents()
     {
-        Id = id;
-        SetCreationAudit(createdBy);
+        _domainEvents?.Clear();
     }
 
-    protected void MarkModified(string modifiedBy)
+    /// <summary>
+    /// Add domain event.
+    /// </summary>
+    /// <param name="domainEvent">Domain event.</param>
+    protected void AddDomainEvent(IDomainEvent domainEvent)
     {
-        SetModificationAudit(modifiedBy);
+        _domainEvents ??= new List<IDomainEvent>();
+
+        this._domainEvents.Add(domainEvent);
     }
 }
