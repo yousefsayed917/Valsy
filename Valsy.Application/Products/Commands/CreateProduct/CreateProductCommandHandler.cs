@@ -5,25 +5,29 @@ using Valsy.Domain.Products.Repository;
 
 namespace Valsy.Application.Products.Commands.CreateProduct;
 
-public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, int>
+public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Unit>
 {
     private readonly IProductRepository _productRepository;
-    private readonly IMapper _mapper;
-
     public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
     {
         _productRepository = productRepository;
-        _mapper = mapper;
     }
 
-    public async Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        Product product = _mapper.Map<Product>(request);
-        product.Create(product);
+        Product product = Product.Create(request.UpsertProductRequest.Name, request.UpsertProductRequest.Description, request.UpsertProductRequest.Price);
 
+        foreach (var variantDto in request.UpsertProductRequest.Variants)
+        {
+            product.AddVariant(
+                variantDto.Size,
+                variantDto.Color,
+                variantDto.Stock,
+                variantDto.Image);
+        }
         await _productRepository.AddAsync(product);
         await _productRepository.SaveChangesAsync();
 
-        return product.Id;
+        return Unit.Value;
     }
 }

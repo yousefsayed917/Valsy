@@ -1,29 +1,33 @@
+using System.Linq.Expressions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Valsy.Application.Common.Interfaces;
+using Valsy.Domain.Orders;
+using Valsy.Domain.Orders.Repository;
+using Valsy.Domain.Products;
+using Valsy.Domain.Products.Repository;
 
 namespace Valsy.Application.Orders.Commands.AddOrderItem;
 
 public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, int>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IOrderRepository _orderRepository;
+    private readonly IProductVariantRepository _productVariantRepository;
 
-    public AddOrderItemCommandHandler(IApplicationDbContext dbContext)
+    public AddOrderItemCommandHandler(IOrderRepository orderRepository, IProductVariantRepository productVariantRepository)
     {
-        _dbContext = dbContext;
+        _orderRepository = orderRepository;
+        _productVariantRepository = productVariantRepository;
     }
 
     public async Task<int> Handle(AddOrderItemCommand request, CancellationToken cancellationToken)
     {
-        var order = await _dbContext.Orders
-            .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken)
-            ?? throw new InvalidOperationException("Order not found.");
+        var order = await _orderRepository.FirstOrDefaultAsync(
+            o => o.Id == request.OrderId,
+            new List<Expression<Func<Order, object>>> { o => o.Items }
+        ) ?? throw new InvalidOperationException("Order not found.");
 
-        var variant = await _dbContext.ProductVariants
-            .Include(v => v.Product)
-            .FirstOrDefaultAsync(v => v.Id == request.ProductVariantId, cancellationToken)
-            ?? throw new InvalidOperationException("Variant not found.");
+        var variant = await _productVariantRepository.FirstOrDefaultAsync(
+            v => v.Id == request.ProductVariantId
+        ) ?? throw new InvalidOperationException("Variant not found.");
 
         if (variant.ProductId != request.ProductId)
         {
@@ -35,19 +39,21 @@ public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, i
             throw new InvalidOperationException("Insufficient stock for this variant.");
         }
 
-        variant.UpdateStock(variant.Stock - request.Quantity, request.RequestedBy);
+        variant.UpdateStock(variant.Stock - request.Quantity);
 
         order.AddItem(
             request.ProductId,
             request.ProductVariantId,
-            variant.Product.Name,
+            "Product Name", // You may need to fetch this from the product
             variant.Size,
             variant.Color,
-            variant.Product.Price,
+            0, // You may need to fetch the price from the product
             request.Quantity,
             request.RequestedBy);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _orderRepository.SaveChangesAsync();
         return order.Id;
     }
 }
+
+

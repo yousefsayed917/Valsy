@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using Valsy.Application.Products.Commands.CreateProduct;
-using Valsy.Application.Products.Commands.CreateProductVariant;
+using Microsoft.AspNetCore.Mvc;
 using Valsy.Application.Products.Commands.AdjustStock;
+using Valsy.Application.Products.Commands.CreateProduct;
 using Valsy.Application.Products.Queries.GetProducts;
 using Valsy.Application.Requests;
 
@@ -29,38 +28,17 @@ public class ProductsAdminController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] UpsertProductRequest request, CancellationToken cancellationToken)
     {
-        var productId = await _sender.Send(
-            new CreateProductCommand(request),
-            cancellationToken);
-
-        return Ok(new { productId });
+        await _sender.Send(new CreateProductCommand(request), cancellationToken);
+        return Created();
     }
 
-    [HttpPost("{productId:guid}/variants")]
-    public async Task<IActionResult> CreateVariant(
-        Guid productId,
-        [FromBody] CreateProductVariantRequest request,
-        CancellationToken cancellationToken)
-    {
-        var variantId = await _sender.Send(
-            new CreateProductVariantCommand(
-                productId,
-                request.Size,
-                request.Color,
-                request.Stock,
-                request.RequestedBy),
-            cancellationToken);
-
-        return Ok(new { variantId });
-    }
-
-    [HttpPut("variants/{variantId:guid}/stock")]
+    [HttpPut("productvariants/{productId:int}/stock")]
     public async Task<IActionResult> AdjustStock(
-        Guid variantId,
+        int productId,
         [FromBody] AdjustStockRequest request,
         CancellationToken cancellationToken)
     {
-        await _sender.Send(new AdjustStockCommand(variantId, request.NewStock, request.RequestedBy), cancellationToken);
+        await _sender.Send(new AdjustStockCommand(productId, request), cancellationToken);
         return NoContent();
     }
 }

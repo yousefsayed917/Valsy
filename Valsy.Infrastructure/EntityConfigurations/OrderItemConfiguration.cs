@@ -11,7 +11,6 @@ namespace Valsy.Infrastructure.EntityConfigurations
             builder.ToTable("OrderItems");
 
             builder.HasKey(i => i.Id);
-            builder.Property(i => i.Id).ValueGeneratedNever();
 
             builder.Property(i => i.OrderId).IsRequired();
             builder.Property(i => i.ProductId).IsRequired();
@@ -24,11 +23,9 @@ namespace Valsy.Infrastructure.EntityConfigurations
                 .HasMaxLength(200);
 
             builder.Property(i => i.Size)
-                .IsRequired()
                 .HasMaxLength(50);
 
             builder.Property(i => i.Color)
-                .IsRequired()
                 .HasMaxLength(100);
 
             builder.Property(i => i.UnitPrice)
@@ -43,24 +40,6 @@ namespace Valsy.Infrastructure.EntityConfigurations
             builder.Property(i => i.CreatedBy).IsRequired().HasMaxLength(100);
             builder.Property(i => i.LastModifiedAt);
             builder.Property(i => i.LastModifiedBy).HasMaxLength(100);
-
-            builder.Property(p => p.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
-
-
-            builder.HasOne(i => i.Order)
-                .WithMany(o => o.Items)
-                .HasForeignKey(i => i.OrderId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(i => i.Product)
-                .WithMany(p => p.OrderItems)
-                .HasForeignKey(i => i.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(i => i.ProductVariant)
-                .WithMany(v => v.OrderItems)
-                .HasForeignKey(i => i.ProductVariantId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

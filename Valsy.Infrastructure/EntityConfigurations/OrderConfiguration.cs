@@ -11,7 +11,6 @@ namespace Valsy.Infrastructure.EntityConfigurations
             builder.ToTable("Orders");
 
             builder.HasKey(o => o.Id);
-            builder.Property(o => o.Id).ValueGeneratedNever();
 
             builder.Property(o => o.CustomerId).IsRequired();
 
@@ -24,17 +23,23 @@ namespace Valsy.Infrastructure.EntityConfigurations
                 .HasConversion<int>()
                 .IsRequired();
 
-            builder.Property(o => o.ShippingAddressLine1)
-                .IsRequired()
-                .HasMaxLength(250);
+            builder.OwnsOne(o => o.Address, a =>
+            {
+                a.Property(x => x.AddressLine1)
+                    .HasColumnName("ShippingAddressLine1")
+                    .IsRequired()
+                    .HasMaxLength(250);
 
-            builder.Property(o => o.ShippingCity)
-                .IsRequired()
-                .HasMaxLength(100);
+                a.Property(x => x.City)
+                    .HasColumnName("ShippingCity")
+                    .IsRequired()
+                    .HasMaxLength(100);
 
-            builder.Property(o => o.ShippingCountry)
-                .IsRequired()
-                .HasMaxLength(100);
+                a.Property(x => x.Country)
+                    .HasColumnName("ShippingCountry")
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
 
             builder.Property(o => o.ContactPhone)
                 .IsRequired()
@@ -49,9 +54,8 @@ namespace Valsy.Infrastructure.EntityConfigurations
 
             builder.Property(p => p.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
-
             builder.HasMany(o => o.Items)
-                .WithOne(i => i.Order)
+                .WithOne()
                 .HasForeignKey(i => i.OrderId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);

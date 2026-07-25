@@ -1,4 +1,4 @@
-﻿using Valsy.Domain.Common.Exceptions;
+using Valsy.Domain.Common.Exceptions;
 
 namespace Valsy.Application.Common.Exceptions
 {
@@ -12,7 +12,7 @@ namespace Valsy.Application.Common.Exceptions
             Errors = errors;
 
         }
-        public NotFoundException(string messageError, List<(string, string)> errors = null)
+        public NotFoundException(string messageError, List<(string, string)> errors)
         {
             MessageError = messageError;
             Errors = errors;

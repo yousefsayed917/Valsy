@@ -1,6 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using MediatR;
-using Valsy.Application.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Valsy.Domain.Common;
 using Valsy.Domain.Customers;
 using Valsy.Domain.Orders;

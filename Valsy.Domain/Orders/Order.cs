@@ -8,9 +8,7 @@ public class Order : AggregateRoot<int>
     public int CustomerId { get; private set; }
     public Customer Customer { get; private set; } = default!;
     public OrderStatus Status { get; private set; }
-    public string ShippingAddressLine1 { get; private set; } = string.Empty;
-    public string ShippingCity { get; private set; } = string.Empty;
-    public string ShippingCountry { get; private set; } = string.Empty;
+    public Address Address { get; private set; }
     public string ContactPhone { get; private set; } = string.Empty;
     public List<OrderItem> Items { get; private set; } = new();
     public decimal TotalAmount => Items.Sum(i => i.TotalPrice);
@@ -29,9 +27,7 @@ public class Order : AggregateRoot<int>
         {
             CustomerId = customerId,
             Status = OrderStatus.Pending,
-            ShippingAddressLine1 = shippingAddressLine1,
-            ShippingCity = shippingCity,
-            ShippingCountry = shippingCountry,
+            Address = new Address(shippingAddressLine1, shippingCity, shippingCountry),
             ContactPhone = contactPhone
         };
 

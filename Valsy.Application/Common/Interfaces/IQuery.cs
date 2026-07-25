@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Localization;
 using System.Text.Json.Serialization;
+using Valsy.Application.Common.Exceptions;
 
 namespace Valsy.Application.Common.Interfaces
 {
@@ -18,7 +19,7 @@ namespace Valsy.Application.Common.Interfaces
         }
         public void NotFound(string key, IStringLocalizer stringLocalizer)
         {
-            throw new NotFoundException(stringLocalizer[key].Value);
+            throw new NotFoundException(stringLocalizer[key].Value, new List<(string, string)>());
         }
     }
     public abstract class RequestBase<TResult> : IRequest<TResult>
@@ -31,7 +32,7 @@ namespace Valsy.Application.Common.Interfaces
         }
         public void NotFound(string key, IStringLocalizer stringLocalizer)
         {
-            throw new NotFoundException(stringLocalizer[key].Value);
+            throw new NotFoundException(stringLocalizer[key].Value, new List<(string, string)>());
         }
     }
 

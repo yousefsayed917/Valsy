@@ -23,8 +23,8 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
         var product = await _sender.Send(new GetProductByIdQuery(id), cancellationToken);
         if (product is null)

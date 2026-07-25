@@ -1,5 +1,5 @@
 using Valsy.Domain.Common.Abstractions;
-using Valsy.Domain.Exceptions;
+using Valsy.Domain.Common.Exceptions;
 
 namespace Valsy.Domain.Common;
 

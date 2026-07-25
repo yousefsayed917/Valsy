@@ -1,16 +1,15 @@
 using MediatR;
-using Valsy.Application.Common.Interfaces;
-using Valsy.Domain.Orders;
+using Valsy.Domain.Orders.Repository;using Valsy.Domain.Orders;
 
 namespace Valsy.Application.Orders.Commands.CreateOrder;
 
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IOrderRepository _orderRepository;
 
-    public CreateOrderCommandHandler(IApplicationDbContext dbContext)
+    public CreateOrderCommandHandler(IOrderRepository orderRepository)
     {
-        _dbContext = dbContext;
+        _orderRepository = orderRepository;
     }
 
     public async Task<int> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -23,8 +22,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, int
             request.ContactPhone,
             request.RequestedBy);
 
-        await _dbContext.Orders.AddAsync(order, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _orderRepository.AddAsync(order);
+        await _orderRepository.SaveChangesAsync();
 
         return order.Id;
     }

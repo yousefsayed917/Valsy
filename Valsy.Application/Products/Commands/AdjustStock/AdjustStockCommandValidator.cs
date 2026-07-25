@@ -6,8 +6,7 @@ public class AdjustStockCommandValidator : AbstractValidator<AdjustStockCommand>
 {
     public AdjustStockCommandValidator()
     {
-        RuleFor(x => x.ProductVariantId).NotEmpty();
-        RuleFor(x => x.NewStock).GreaterThanOrEqualTo(0);
-        RuleFor(x => x.RequestedBy).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.AdjustStockRequest.ProductVariantId).NotEmpty();
+        RuleFor(x => x.AdjustStockRequest.NewStock).GreaterThanOrEqualTo(0);
     }
 }

@@ -1,25 +1,24 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Valsy.Application.Common.Interfaces;
+using Valsy.Domain.Products.Repository;
 
 namespace Valsy.Application.Products.Commands.AdjustStock;
 
 public class AdjustStockCommandHandler : IRequestHandler<AdjustStockCommand>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductRepository _productRepository;
 
-    public AdjustStockCommandHandler(IApplicationDbContext dbContext)
+    public AdjustStockCommandHandler(IProductRepository productRepository)
     {
-        _dbContext = dbContext;
+        _productRepository = productRepository;
     }
 
     public async Task Handle(AdjustStockCommand request, CancellationToken cancellationToken)
     {
-        var variant = await _dbContext.ProductVariants
-            .FirstOrDefaultAsync(v => v.Id == request.ProductVariantId, cancellationToken)
-            ?? throw new KeyNotFoundException($"Product variant with ID '{request.ProductVariantId}' not found.");
+        var product = await _productRepository.GetAsync(request.productId)
+            ?? throw new KeyNotFoundException($"Product with ID '{request.productId}' not found.");
 
-        variant.UpdateStock(request.NewStock, request.RequestedBy);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        product.AdjustVariantStock(request.AdjustStockRequest.ProductVariantId, request.AdjustStockRequest.NewStock);
+
+        await _productRepository.SaveChangesAsync();
     }
 }

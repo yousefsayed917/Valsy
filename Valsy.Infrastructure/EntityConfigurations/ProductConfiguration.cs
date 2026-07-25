@@ -11,7 +11,6 @@ namespace Valsy.Infrastructure.EntityConfigurations
             builder.ToTable("Products");
 
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id).ValueGeneratedNever();
 
             builder.Property(p => p.Name)
                 .IsRequired()
@@ -32,16 +31,11 @@ namespace Valsy.Infrastructure.EntityConfigurations
             builder.Property(p => p.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
             builder.HasMany(p => p.Variants)
-                .WithOne(v => v.Product)
+                .WithOne()
                 .HasForeignKey(v => v.ProductId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(p => p.OrderItems)
-                .WithOne(i => i.Product)
-                .HasForeignKey(i => i.ProductId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
+

@@ -31,17 +31,9 @@ namespace Valsy.Infrastructure.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(30);
 
-            builder.Property(c => c.AddressLine1)
+            builder.Property(c => c.Address)
                 .IsRequired()
                 .HasMaxLength(250);
-
-            builder.Property(c => c.City)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(c => c.Country)
-                .IsRequired()
-                .HasMaxLength(100);
 
             builder.Property(c => c.CreatedAt).IsRequired();
             builder.Property(c => c.CreatedBy).IsRequired().HasMaxLength(100);

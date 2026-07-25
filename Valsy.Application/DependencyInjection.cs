@@ -1,5 +1,4 @@
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Valsy.Application.Common.Behaviors;
 
@@ -9,7 +8,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(DependencyInjection).Assembly);
+        services.AddAutoMapper(cfg => cfg.AddMaps(typeof(DependencyInjection).Assembly));
 
         services.AddMediatR(cfg =>
         {

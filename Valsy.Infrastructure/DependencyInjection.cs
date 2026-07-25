@@ -4,6 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Valsy.Application.Common.Interfaces;
 using Valsy.Domain.Common.Abstractions;
 using Valsy.Infrastructure.Common.Repositories;
+using Valsy.Domain.Products.Repository;
+using Valsy.Domain.Orders.Repository;
+using Valsy.Domain.Customers.Repository;
+using Valsy.Infrastructure.Repositories;
 
 namespace Valsy.Infrastructure;
 
@@ -16,8 +20,13 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
         services.AddDbContext<ValsyDbContext>(options => options.UseMySQL(connectionString));
-        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ValsyDbContext>());
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<DbContext, ValsyDbContext>(sp => sp.GetRequiredService<ValsyDbContext>());
+        services.AddScoped<IHilo, HiloGenerator>();
+        services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
 
         return services;
     }

@@ -1,26 +1,25 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Valsy.Application.Common.Interfaces;
-
+using Valsy.Domain.Orders.Repository;
 namespace Valsy.Application.Orders.Commands.SubmitOrder;
 
 public class SubmitOrderCommandHandler : IRequestHandler<SubmitOrderCommand>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IOrderRepository _orderRepository;
 
-    public SubmitOrderCommandHandler(IApplicationDbContext dbContext)
+    public SubmitOrderCommandHandler(IOrderRepository orderRepository)
     {
-        _dbContext = dbContext;
+        _orderRepository = orderRepository;
     }
 
     public async Task Handle(SubmitOrderCommand request, CancellationToken cancellationToken)
     {
-        var order = await _dbContext.Orders
-            .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == request.OrderId)
-            ?? throw new InvalidOperationException("Order not found.");
+        var order = await _orderRepository.FirstOrDefaultAsync(
+            o => o.Id == request.OrderId,
+            new List<System.Linq.Expressions.Expression<System.Func<Valsy.Domain.Orders.Order, object>>> { o => o.Items }
+        ) ?? throw new InvalidOperationException("Order not found.");
 
         order.Submit(request.RequestedBy);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await _orderRepository.SaveChangesAsync();
     }
 }

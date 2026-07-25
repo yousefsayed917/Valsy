@@ -1,36 +1,30 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Valsy.Application.Common.Interfaces;
+using Valsy.Domain.Products.Repository;
 using Valsy.Application.Products.Dtos;
 
 namespace Valsy.Application.Products.Queries.GetProducts;
 
 public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<ProductDto>>
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
 
-    public GetProductsQueryHandler(IApplicationDbContext dbContext, IMapper mapper)
+    public GetProductsQueryHandler(IProductRepository productRepository, IMapper mapper)
     {
-        _dbContext = dbContext;
+        _productRepository = productRepository;
         _mapper = mapper;
     }
 
     public async Task<List<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        var query = _dbContext.Products
-            .Include(p => p.Variants)
-            .AsNoTracking();
+        var searchTerm = request.SearchTerm?.ToLower();
+        var products = await _productRepository.GetAllIncludingListAsync(
+            p => string.IsNullOrWhiteSpace(searchTerm) || p.Name.ToLower().Contains(searchTerm) || p.Description.ToLower().Contains(searchTerm),
+            [p => p.Variants]
+        );
 
-        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-        {
-            var searchTerm = request.SearchTerm.ToLower();
-            query = query.Where(p => p.Name.ToLower().Contains(searchTerm) || 
-                                     p.Description.ToLower().Contains(searchTerm));
-        }
-
-        var products = await query.ToListAsync(cancellationToken);
         return _mapper.Map<List<ProductDto>>(products);
     }
 }

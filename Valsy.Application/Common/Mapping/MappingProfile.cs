@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Valsy.Application.Products.Dtos;
 using Valsy.Application.Requests;
 using Valsy.Domain.Products;
 
@@ -8,7 +9,7 @@ namespace Valsy.Application.Common.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Product, UpsertProductRequest>().ReverseMap();
+            CreateMap<Product, ProductDto>().ReverseMap();
         }
     }
 }
