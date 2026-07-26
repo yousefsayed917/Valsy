@@ -17,14 +17,13 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var connectionString = configuration.GetConnectionString("DefaultConnection")!;
 
         services.AddDbContext<ValsyDbContext>(options => options.UseMySQL(connectionString));
         services.AddScoped<DbContext, ValsyDbContext>(sp => sp.GetRequiredService<ValsyDbContext>());
         services.AddScoped<IHilo, HiloGenerator>();
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
 

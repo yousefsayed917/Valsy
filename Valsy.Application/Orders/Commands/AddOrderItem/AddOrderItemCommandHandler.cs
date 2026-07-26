@@ -10,12 +10,12 @@ namespace Valsy.Application.Orders.Commands.AddOrderItem;
 public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, int>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly IProductVariantRepository _productVariantRepository;
+    private readonly IProductRepository _productRepository;
 
-    public AddOrderItemCommandHandler(IOrderRepository orderRepository, IProductVariantRepository productVariantRepository)
+    public AddOrderItemCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository)
     {
         _orderRepository = orderRepository;
-        _productVariantRepository = productVariantRepository;
+        _productRepository = productRepository;
     }
 
     public async Task<int> Handle(AddOrderItemCommand request, CancellationToken cancellationToken)
@@ -25,14 +25,11 @@ public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, i
             new List<Expression<Func<Order, object>>> { o => o.Items }
         ) ?? throw new InvalidOperationException("Order not found.");
 
-        var variant = await _productVariantRepository.FirstOrDefaultAsync(
-            v => v.Id == request.ProductVariantId
-        ) ?? throw new InvalidOperationException("Variant not found.");
+        var product = await _productRepository.GetAsync(request.ProductId)
+            ?? throw new InvalidOperationException("Product not found.");
 
-        if (variant.ProductId != request.ProductId)
-        {
-            throw new InvalidOperationException("Variant does not belong to the specified product.");
-        }
+        var variant = product.Variants.FirstOrDefault(v => v.Id == request.ProductVariantId)
+            ?? throw new InvalidOperationException("Variant not found.");
 
         if (variant.Stock < request.Quantity)
         {
@@ -44,10 +41,10 @@ public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, i
         order.AddItem(
             request.ProductId,
             request.ProductVariantId,
-            "Product Name", // You may need to fetch this from the product
+            product.Name,
             variant.Size,
             variant.Color,
-            0, // You may need to fetch the price from the product
+            product.Price,
             request.Quantity,
             request.RequestedBy);
 
