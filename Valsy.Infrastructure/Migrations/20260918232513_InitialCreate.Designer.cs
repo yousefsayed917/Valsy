@@ -2,42 +2,30 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Valsy.Infrastructure;
 
 #nullable disable
 
-namespace Valsy.Infrastructure.Persistence.Migrations
+namespace Valsy.Infrastructure.Migrations
 {
     [DbContext(typeof(ValsyDbContext))]
-    partial class ValsyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260918232513_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Valsy.Domain.Customer", b =>
+            modelBuilder.Entity("Valsy.Domain.Customers.Customer", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("AddressLine1")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -79,7 +67,6 @@ namespace Valsy.Infrastructure.Persistence.Migrations
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("longblob");
 
@@ -91,10 +78,11 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                     b.ToTable("Customers", (string)null);
                 });
 
-            modelBuilder.Entity("Valsy.Domain.Order", b =>
+            modelBuilder.Entity("Valsy.Domain.Orders.Order", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<string>("ContactPhone")
                         .IsRequired()
@@ -109,8 +97,8 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
@@ -124,24 +112,8 @@ namespace Valsy.Infrastructure.Persistence.Migrations
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("longblob");
-
-                    b.Property<string>("ShippingAddressLine1")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("varchar(250)");
-
-                    b.Property<string>("ShippingCity")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("ShippingCountry")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -153,13 +125,13 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                     b.ToTable("Orders", (string)null);
                 });
 
-            modelBuilder.Entity("Valsy.Domain.OrderItem", b =>
+            modelBuilder.Entity("Valsy.Domain.Orders.OrderItem", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<string>("Color")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -181,31 +153,24 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<Guid>("ProductVariantId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("ProductVariantId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("longblob");
-
                     b.Property<string>("Size")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
@@ -214,20 +179,17 @@ namespace Valsy.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductVariantId");
-
                     b.HasIndex("OrderId", "ProductVariantId")
                         .IsUnique();
 
                     b.ToTable("OrderItems", (string)null);
                 });
 
-            modelBuilder.Entity("Valsy.Domain.Product", b =>
+            modelBuilder.Entity("Valsy.Domain.Products.Product", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -238,7 +200,6 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
 
@@ -262,7 +223,6 @@ namespace Valsy.Infrastructure.Persistence.Migrations
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("longblob");
 
@@ -271,13 +231,13 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
-            modelBuilder.Entity("Valsy.Domain.ProductVariant", b =>
+            modelBuilder.Entity("Valsy.Domain.Products.ProductVariant", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<string>("Color")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -289,6 +249,10 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<string>("Image")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
@@ -299,17 +263,10 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("longblob");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Size")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
@@ -318,81 +275,122 @@ namespace Valsy.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId", "Size", "Color")
-                        .IsUnique();
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductVariants", (string)null);
                 });
 
-            modelBuilder.Entity("Valsy.Domain.Order", b =>
+            modelBuilder.Entity("Valsy.Domain.Customers.Customer", b =>
                 {
-                    b.HasOne("Valsy.Domain.Customer", "Customer")
+                    b.OwnsOne("Valsy.Domain.Customers.Address", "Address", b1 =>
+                        {
+                            b1.Property<int>("CustomerId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("AddressLine1")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("varchar(200)")
+                                .HasColumnName("AddressLine1");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("varchar(100)")
+                                .HasColumnName("City");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("varchar(100)")
+                                .HasColumnName("Country");
+
+                            b1.HasKey("CustomerId");
+
+                            b1.ToTable("Customers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CustomerId");
+                        });
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Valsy.Domain.Orders.Order", b =>
+                {
+                    b.HasOne("Valsy.Domain.Customers.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.OwnsOne("Valsy.Domain.Customers.Address", "Address", b1 =>
+                        {
+                            b1.Property<int>("OrderId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("AddressLine1")
+                                .IsRequired()
+                                .HasMaxLength(250)
+                                .HasColumnType("varchar(250)")
+                                .HasColumnName("ShippingAddressLine1");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("varchar(100)")
+                                .HasColumnName("ShippingCity");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("varchar(100)")
+                                .HasColumnName("ShippingCountry");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.Navigation("Address");
+
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Valsy.Domain.OrderItem", b =>
+            modelBuilder.Entity("Valsy.Domain.Orders.OrderItem", b =>
                 {
-                    b.HasOne("Valsy.Domain.Order", "Order")
+                    b.HasOne("Valsy.Domain.Orders.Order", null)
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Valsy.Domain.Product", "Product")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Valsy.Domain.ProductVariant", "ProductVariant")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ProductVariantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductVariant");
                 });
 
-            modelBuilder.Entity("Valsy.Domain.ProductVariant", b =>
+            modelBuilder.Entity("Valsy.Domain.Products.ProductVariant", b =>
                 {
-                    b.HasOne("Valsy.Domain.Product", "Product")
+                    b.HasOne("Valsy.Domain.Products.Product", null)
                         .WithMany("Variants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Valsy.Domain.Customer", b =>
+            modelBuilder.Entity("Valsy.Domain.Customers.Customer", b =>
                 {
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("Valsy.Domain.Order", b =>
+            modelBuilder.Entity("Valsy.Domain.Orders.Order", b =>
                 {
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("Valsy.Domain.Product", b =>
+            modelBuilder.Entity("Valsy.Domain.Products.Product", b =>
                 {
-                    b.Navigation("OrderItems");
-
                     b.Navigation("Variants");
-                });
-
-            modelBuilder.Entity("Valsy.Domain.ProductVariant", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,10 +4,10 @@ using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace Valsy.Infrastructure.Persistence.Migrations
+namespace Valsy.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialEcommerceModel : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,20 +19,20 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     FirstName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
-                    AddressLine1 = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: false),
-                    City = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
-                    Country = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    AddressLine1 = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
+                    City = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
+                    Country = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     LastModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "longblob", rowVersion: true, nullable: false)
+                    RowVersion = table.Column<byte[]>(type: "longblob", rowVersion: true, nullable: true)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
@@ -45,16 +45,17 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: false),
+                    Description = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     LastModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "longblob", rowVersion: true, nullable: false)
+                    RowVersion = table.Column<byte[]>(type: "longblob", rowVersion: true, nullable: true)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
@@ -67,19 +68,20 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    ShippingAddressLine1 = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: false),
-                    ShippingCity = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
-                    ShippingCountry = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    ShippingAddressLine1 = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: true),
+                    ShippingCity = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
+                    ShippingCountry = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
                     ContactPhone = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     LastModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
                     IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "longblob", rowVersion: true, nullable: false)
+                    RowVersion = table.Column<byte[]>(type: "longblob", rowVersion: true, nullable: true)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
@@ -98,18 +100,18 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                 name: "ProductVariants",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    Size = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    Color = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Size = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
+                    Color = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
+                    Image = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true),
                     Stock = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     LastModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "longblob", rowVersion: true, nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.ComputedColumn)
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -127,22 +129,21 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    OrderId = table.Column<Guid>(type: "char(36)", nullable: false),
-                    ProductId = table.Column<Guid>(type: "char(36)", nullable: false),
-                    ProductVariantId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ProductVariantId = table.Column<int>(type: "int", nullable: false),
                     ProductName = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false),
-                    Size = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    Color = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    Size = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
+                    Color = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     LastModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
-                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "longblob", rowVersion: true, nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.ComputedColumn)
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -153,18 +154,6 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_ProductVariants_ProductVariantId",
-                        column: x => x.ProductVariantId,
-                        principalTable: "ProductVariants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -181,25 +170,14 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_ProductId",
-                table: "OrderItems",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_ProductVariantId",
-                table: "OrderItems",
-                column: "ProductVariantId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductVariants_ProductId_Size_Color",
+                name: "IX_ProductVariants_ProductId",
                 table: "ProductVariants",
-                columns: new[] { "ProductId", "Size", "Color" },
-                unique: true);
+                column: "ProductId");
         }
 
         /// <inheritdoc />
@@ -209,16 +187,16 @@ namespace Valsy.Infrastructure.Persistence.Migrations
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
-                name: "Orders");
-
-            migrationBuilder.DropTable(
                 name: "ProductVariants");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
         }
     }
 }

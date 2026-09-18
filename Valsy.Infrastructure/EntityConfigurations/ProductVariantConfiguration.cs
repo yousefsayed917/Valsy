@@ -8,7 +8,7 @@ namespace Valsy.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<ProductVariant> builder)
         {
-            builder.ToTable("ProductVariants");
+            builder.ToTable("ProductVariant");
 
             builder.HasKey(v => v.Id);
 

@@ -1,4 +1,5 @@
 using Valsy.Domain.Common;
+using Valsy.Domain.Products;
 
 namespace Valsy.Domain.Orders;
 
@@ -6,7 +7,9 @@ public class OrderItem : Entity<int>
 {
     public int OrderId { get; private set; }
     public int ProductId { get; private set; }
+    public Product Product { get; private set; } = null!;
     public int ProductVariantId { get; private set; }
+    public ProductVariant ProductVariant { get; private set; } = null!;
     public string ProductName { get; private set; } = string.Empty;
     public string Size { get; private set; } = string.Empty;
     public string Color { get; private set; } = string.Empty;

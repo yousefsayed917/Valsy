@@ -8,7 +8,7 @@ namespace Valsy.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Customer> builder)
         {
-            builder.ToTable("Customers");
+            builder.ToTable("Customer");
 
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Id).ValueGeneratedNever();
@@ -31,9 +31,23 @@ namespace Valsy.Infrastructure.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(30);
 
-            builder.Property(c => c.Address)
-                .IsRequired()
-                .HasMaxLength(250);
+            builder.OwnsOne(c => c.Address, addressBuilder =>
+            {
+                addressBuilder.Property(a => a.AddressLine1)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("AddressLine1");
+
+                addressBuilder.Property(a => a.City)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("City");
+
+                addressBuilder.Property(a => a.Country)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("Country");
+            });
 
             builder.Property(c => c.CreatedAt).IsRequired();
             builder.Property(c => c.CreatedBy).IsRequired().HasMaxLength(100);

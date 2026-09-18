@@ -8,7 +8,7 @@ namespace Valsy.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
-            builder.ToTable("OrderItems");
+            builder.ToTable("OrderItem");
 
             builder.HasKey(i => i.Id);
 
@@ -35,6 +35,16 @@ namespace Valsy.Infrastructure.EntityConfigurations
             builder.Property(i => i.Quantity).IsRequired();
 
             builder.Ignore(i => i.TotalPrice);
+
+            builder.HasOne(i => i.Product)
+                .WithMany()
+                .HasForeignKey(i => i.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(i => i.ProductVariant)
+                .WithMany()
+                .HasForeignKey(i => i.ProductVariantId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(i => i.CreatedAt).IsRequired();
             builder.Property(i => i.CreatedBy).IsRequired().HasMaxLength(100);

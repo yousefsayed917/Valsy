@@ -8,7 +8,7 @@ namespace Valsy.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.ToTable("Orders");
+            builder.ToTable("Order");
 
             builder.HasKey(o => o.Id);
 
