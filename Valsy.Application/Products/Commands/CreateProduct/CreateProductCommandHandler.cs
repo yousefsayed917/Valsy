@@ -1,4 +1,3 @@
-using AutoMapper;
 using MediatR;
 using Valsy.Domain.Products;
 using Valsy.Domain.Products.Repository;
@@ -8,7 +7,7 @@ namespace Valsy.Application.Products.Commands.CreateProduct;
 public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Unit>
 {
     private readonly IProductRepository _productRepository;
-    public CreateProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+    public CreateProductCommandHandler(IProductRepository productRepository)
     {
         _productRepository = productRepository;
     }
@@ -19,11 +18,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
 
         foreach (var variantDto in request.UpsertProductRequest.Variants)
         {
-            product.AddVariant(
-                variantDto.Size,
-                variantDto.Color,
-                variantDto.Stock,
-                variantDto.Image);
+            product.AddVariant(variantDto.Size, variantDto.Color, variantDto.Stock, variantDto.Image);
         }
         await _productRepository.AddAsync(product);
         await _productRepository.SaveChangesAsync();

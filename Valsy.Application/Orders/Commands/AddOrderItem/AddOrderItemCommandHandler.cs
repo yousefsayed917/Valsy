@@ -36,15 +36,7 @@ public class AddOrderItemCommandHandler : IRequestHandler<AddOrderItemCommand, i
 
         variant.UpdateStock(variant.Stock - request.Quantity);
 
-        order.AddItem(
-            request.ProductId,
-            request.ProductVariantId,
-            product.Name,
-            variant.Size,
-            variant.Color,
-            product.Price,
-            request.Quantity,
-            request.RequestedBy);
+        order.AddItem(variant, product.Name, request.Quantity, product.Price, request.RequestedBy);
 
         await _orderRepository.SaveChangesAsync();
         return order.Id;

@@ -1,11 +1,12 @@
 using AutoMapper;
 using MediatR;
+using Valsy.Application.Common.Exceptions;
 using Valsy.Application.Products.Dtos;
 using Valsy.Domain.Products.Repository;
 
 namespace Valsy.Application.Products.Queries.GetProductById;
 
-public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductDto?>
+public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductDto>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
@@ -16,10 +17,10 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
         _mapper = mapper;
     }
 
-    public async Task<ProductDto?> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ProductDto> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
         var product = await _productRepository.FirstOrDefaultAsync(p => p.Id == request.ProductId);
 
-        return product is null ? null : _mapper.Map<ProductDto>(product);
+        return product is null ? throw new NotFoundException("Product not found", []) : _mapper.Map<ProductDto>(product);
     }
 }

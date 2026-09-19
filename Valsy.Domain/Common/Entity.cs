@@ -21,7 +21,7 @@ public abstract class Entity<TId> : AuditableEntity, IEntity<TId>
         return Id.Equals(default(TId));
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         if (obj is not Entity<TId> item)
             return false;

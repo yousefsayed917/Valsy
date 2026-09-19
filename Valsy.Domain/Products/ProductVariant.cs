@@ -17,15 +17,15 @@ public class ProductVariant : Entity<int>
 
         return new ProductVariant
         {
-            ProductVariantCode = GenerateProductVariantCode(),
+            ProductVariantCode = GenerateProductVariantCode(size, color),
             Size = size,
             Color = color,
             Image = image,
             Stock = stock
         };
     }
-    private string GenerateProductVariantCode()
-        => $"SP-{this.Size}-{this.Color}";
+    private static string GenerateProductVariantCode(string size, string color)
+        => $"SP-{size}-{color}";
 
     public void UpdateStock(int stock)
     {

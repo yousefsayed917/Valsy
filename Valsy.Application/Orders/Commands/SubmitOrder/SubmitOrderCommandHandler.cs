@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Valsy.Domain.Orders.Repository;
 namespace Valsy.Application.Orders.Commands.SubmitOrder;
 
@@ -15,11 +14,9 @@ public class SubmitOrderCommandHandler : IRequestHandler<SubmitOrderCommand>
     public async Task Handle(SubmitOrderCommand request, CancellationToken cancellationToken)
     {
         var order = await _orderRepository.FirstOrDefaultAsync(
-            o => o.Id == request.OrderId,
-            new List<System.Linq.Expressions.Expression<System.Func<Valsy.Domain.Orders.Order, object>>> { o => o.Items }
-        ) ?? throw new InvalidOperationException("Order not found.");
+            o => o.Id == request.OrderId, [o => o.Items]) ?? throw new InvalidOperationException("Order not found.");
 
-        order.Submit(request.RequestedBy);
+        order.Submit();
         await _orderRepository.SaveChangesAsync();
     }
 }

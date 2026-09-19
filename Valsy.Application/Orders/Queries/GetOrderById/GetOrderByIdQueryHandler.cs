@@ -1,12 +1,12 @@
 using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Valsy.Domain.Orders.Repository;
+using Valsy.Application.Common.Exceptions;
 using Valsy.Application.Orders.Dtos;
+using Valsy.Domain.Orders.Repository;
 
 namespace Valsy.Application.Orders.Queries.GetOrderById;
 
-public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDto?>
+public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDto>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IMapper _mapper;
@@ -17,13 +17,10 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
         _mapper = mapper;
     }
 
-    public async Task<OrderDto?> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+    public async Task<OrderDto> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        var order = await _orderRepository.FirstOrDefaultAsync(
-            o => o.Id == request.OrderId,
-            new List<System.Linq.Expressions.Expression<System.Func<Valsy.Domain.Orders.Order, object>>> { o => o.Items }
-        );
+        var order = await _orderRepository.FirstOrDefaultAsync(o => o.Id == request.OrderId, [o => o.Items]);
 
-        return order is null ? null : _mapper.Map<OrderDto>(order);
+        return order is null ? throw new NotFoundException("Order not found.", []) : _mapper.Map<OrderDto>(order);
     }
 }

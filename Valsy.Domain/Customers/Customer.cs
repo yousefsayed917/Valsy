@@ -1,5 +1,4 @@
 using Valsy.Domain.Common;
-using Valsy.Domain.Orders;
 
 namespace Valsy.Domain.Customers;
 
@@ -15,8 +14,6 @@ public class Customer : AggregateRoot<int>
     private Customer() { }
 
     public Customer Create(Customer customer)
-    {
-        return customer;
-    }
+        => customer;
 }
 public record Address(string AddressLine1, string City, string Country);

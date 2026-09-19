@@ -59,7 +59,7 @@ namespace BuildingBlocks.Infrastructure.Repositories
 
         public virtual async Task<TAggregate> GetAsyncOrDefault(TPrimaryKey aggregateKey)
         {
-            return await _genericRepository.FirstOrDefaultAsync(entity => entity.Id.Equals(aggregateKey));
+            return await _genericRepository.FirstOrDefaultAsync(entity => entity.Id!.Equals(aggregateKey));
         }
 
         public virtual async Task<IEnumerable<TAggregate>> GetAllAsync(Expression<Func<TAggregate, bool>> predicate)

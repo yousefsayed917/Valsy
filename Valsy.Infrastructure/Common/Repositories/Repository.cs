@@ -29,22 +29,22 @@ namespace Valsy.Infrastructure.Common.Repositories
 
         public virtual TEntity FirstOrDefault(TPrimaryKey id)
         {
-            return GetAll().FirstOrDefault(entity => entity.Id.As<TPrimaryKey>().Equals(id));
+            return GetAll().FirstOrDefault(entity => entity.Id.As<TPrimaryKey>()!.Equals(id))!;
         }
 
         public virtual Task<TEntity> FirstOrDefaultAsync(TPrimaryKey id)
         {
-            return GetAll().FirstOrDefaultAsync(entity => entity.Id.As<TPrimaryKey>().Equals(id));
+            return GetAll().FirstOrDefaultAsync(entity => entity.Id.As<TPrimaryKey>()!.Equals(id))!;
         }
 
         public virtual TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
         {
-            return GetAll().FirstOrDefault(predicate);
+            return GetAll().FirstOrDefault(predicate)!;
         }
 
         public virtual Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return GetAll().FirstOrDefaultAsync(predicate);
+            return GetAll().FirstOrDefaultAsync(predicate)!;
         }
 
         public virtual Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
@@ -53,7 +53,7 @@ namespace Valsy.Infrastructure.Common.Repositories
             IQueryable<TEntity> query = GetAll();
             includingPredicates?.ForEach(x => query = query.Include(x));
 
-            return query.FirstOrDefaultAsync(predicate);
+            return query.FirstOrDefaultAsync(predicate)!;
         }
 
         public virtual Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
@@ -119,7 +119,7 @@ namespace Valsy.Infrastructure.Common.Repositories
 
         public virtual async Task<TEntity> GetAsyncOrDefault(TPrimaryKey id)
         {
-            return await FirstOrDefaultAsync(entity => entity.Id.Equals(id));
+            return await FirstOrDefaultAsync(entity => entity.Id!.Equals(id));
         }
         public virtual async Task<List<TEntity>> ExecuteSqlQueryAsync(string sqlQuery, CancellationToken cancellationToken = default)
         {

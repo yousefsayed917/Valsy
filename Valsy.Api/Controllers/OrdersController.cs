@@ -28,7 +28,8 @@ public class OrdersController : ControllerBase
                 request.ShippingCity,
                 request.ShippingCountry,
                 request.ContactPhone,
-                request.RequestedBy),
+                request.RequestedBy,
+                request.Items),
             cancellationToken);
 
         return CreatedAtAction(nameof(GetById), new { id = orderId }, new { orderId });
@@ -64,7 +65,8 @@ public class OrdersController : ControllerBase
         string ShippingCity,
         string ShippingCountry,
         string ContactPhone,
-        string RequestedBy);
+        string RequestedBy,
+        List<OrderItemCommand>? Items = null);
 
     public record AddOrderItemRequest(
         int ProductId,

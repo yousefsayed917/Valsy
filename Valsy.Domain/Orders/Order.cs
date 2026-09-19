@@ -14,11 +14,14 @@ public class Order : AggregateRoot<int>
     public decimal Discount { get; private set; }
     public decimal ShippingCost { get; private set; }
     public decimal TotalAmount { get; private set; }
-    public string? PromoCode { get; private set; }
+    public string PromoCode { get; private set; }
 
     private readonly List<OrderItem> _items = [];
 
     public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
+
+    // Required by EF Core
+    private Order() { }
 
     private Order(int customerId, Address shippingAddress, string contactPhone)
     {

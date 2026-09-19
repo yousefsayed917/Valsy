@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MediatR;
 
 namespace Valsy.Application.Orders.Commands.CreateOrder;
@@ -8,4 +9,7 @@ public record CreateOrderCommand(
     string ShippingCity,
     string ShippingCountry,
     string ContactPhone,
-    string RequestedBy) : IRequest<int>;
+    string RequestedBy,
+    List<OrderItemCommand> Items) : IRequest<int>;
+
+public record OrderItemCommand(int ProductVariantId, int Quantity);
