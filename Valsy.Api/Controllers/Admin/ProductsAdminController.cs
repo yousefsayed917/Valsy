@@ -21,8 +21,8 @@ public class ProductsAdminController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] string? searchTerm, CancellationToken cancellationToken)
     {
-        var products = await _sender.Send(new GetProductsQuery(searchTerm), cancellationToken);
-        return Ok(products);
+        var catalog = await _sender.Send(new GetProductsQuery(searchTerm), cancellationToken);
+        return Ok(catalog.Products);
     }
 
     [HttpPost]
