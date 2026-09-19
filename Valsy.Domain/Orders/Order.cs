@@ -1,120 +1,104 @@
 using Valsy.Domain.Common;
+using Valsy.Domain.Common.Enums;
 using Valsy.Domain.Customers;
-
-namespace Valsy.Domain.Orders;
+using Valsy.Domain.Orders;
 
 public class Order : AggregateRoot<int>
 {
     public int CustomerId { get; private set; }
-    public Customer Customer { get; private set; } = default!;
+    public Customer Customer { get; private set; } = null!;
     public OrderStatus Status { get; private set; }
-    public Address Address { get; private set; }
+    public Address ShippingAddress { get; private set; } = null!;
     public string ContactPhone { get; private set; } = string.Empty;
-    public List<OrderItem> Items { get; private set; } = new();
-    public decimal TotalAmount => Items.Sum(i => i.TotalPrice);
+    public decimal ItemsAmount { get; private set; }
+    public decimal Discount { get; private set; }
+    public decimal ShippingCost { get; private set; }
+    public decimal TotalAmount { get; private set; }
+    public string? PromoCode { get; private set; }
 
-    private Order() { }
+    private readonly List<OrderItem> _items = [];
 
-    public static Order Create(
-        int customerId,
-        string shippingAddressLine1,
-        string shippingCity,
-        string shippingCountry,
-        string contactPhone,
-        string createdBy)
+    public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
+
+    private Order(int customerId, Address shippingAddress, string contactPhone)
     {
-        var order = new Order
-        {
-            CustomerId = customerId,
-            Status = OrderStatus.Pending,
-            Address = new Address(shippingAddressLine1, shippingCity, shippingCountry),
-            ContactPhone = contactPhone
-        };
-
-        return order;
+        CustomerId = customerId;
+        ShippingAddress = shippingAddress;
+        ContactPhone = contactPhone;
+        Status = OrderStatus.Pending;
     }
 
-    public void AddItem(
-        int productId,
-        int productVariantId,
-        string productName,
-        string size,
-        string color,
-        decimal unitPrice,
-        int quantity,
-        string modifiedBy)
+
+    public static Order Create(int customerId, Address shippingAddress, string contactPhone)
     {
+        if (customerId <= 0)
+            throw new ArgumentException("Customer ID must be greater than zero.", nameof(customerId));
+
+        if (shippingAddress is null)
+            throw new ArgumentNullException(nameof(shippingAddress));
+
+        if (string.IsNullOrWhiteSpace(contactPhone))
+            throw new ArgumentException("Contact phone is required.", nameof(contactPhone));
+
+        return new Order(customerId, shippingAddress, contactPhone);
+    }
+    public void AddItem(ProductVariant productVariant, string productName, int quantity, decimal unitPrice, string createdBy)
+    {
+        if (productVariant is null)
+            throw new ArgumentNullException(nameof(productVariant));
+
+        if (string.IsNullOrWhiteSpace(productName))
+            throw new ArgumentException("Product name is required.", nameof(productName));
+
         if (quantity <= 0)
-        {
             throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
-        }
 
-        if (unitPrice <= 0)
+        if (unitPrice < 0)
+            throw new ArgumentException("Unit price cannot be negative.", nameof(unitPrice));
+
+        if (string.IsNullOrWhiteSpace(createdBy))
+            throw new ArgumentException("Created by is required.", nameof(createdBy));
+
+        var existingItem = _items.FirstOrDefault(x => x.ProductVariantId == productVariant.Id);
+
+        if (existingItem is not null)
         {
-            throw new ArgumentException("Unit price must be greater than zero.", nameof(unitPrice));
-        }
-
-        var existingItem = Items.FirstOrDefault(i => i.ProductVariantId == productVariantId);
-
-        if (existingItem is null)
-        {
-            var item = OrderItem.Create(
-                Id,
-                productId,
-                productVariantId,
-                productName,
-                size,
-                color,
-                unitPrice,
-                quantity,
-                modifiedBy);
-
-            Items.Add(item);
+            existingItem.IncreaseQuantity(quantity, createdBy);
         }
         else
         {
-            existingItem.IncreaseQuantity(quantity, modifiedBy);
+            var orderItem = OrderItem.Create(Id, productVariant.Id, productName, productVariant.Size, productVariant.Color, unitPrice, quantity, createdBy);
+            _items.Add(orderItem);
         }
-
     }
-
-    public void Submit(string modifiedBy)
+    public void ApplyDiscount(string promoCode, decimal discountAmount)
     {
-        if (Items.Count == 0)
-        {
-            throw new InvalidOperationException("Cannot submit an order with no items.");
-        }
+        if (string.IsNullOrWhiteSpace(promoCode))
+            throw new ArgumentException("Promo code is required.", nameof(promoCode));
 
-        Status = OrderStatus.Paid;
+        if (discountAmount < 0)
+            throw new ArgumentOutOfRangeException(nameof(discountAmount));
+
+        if (discountAmount > ItemsAmount)
+            throw new ArgumentException("Discount cannot be greater than the items amount.", nameof(discountAmount));
+
+        PromoCode = promoCode.Trim().ToUpperInvariant();
+        Discount = discountAmount;
+        TotalAmount = ItemsAmount - Discount + ShippingCost;
     }
+    public void Submit()
+        => Status = _items.Count == 0
+        ? throw new InvalidOperationException("An order must contain at least one item.") : OrderStatus.Submitted;
 
-    public void MarkAsShipped(string modifiedBy)
-    {
-        if (Status != OrderStatus.Paid)
-        {
-            throw new InvalidOperationException("Only paid orders can be shipped.");
-        }
+    public void MarkAsShipped()
+        => Status = Status != OrderStatus.Submitted
+        ? throw new InvalidOperationException("Only submitted orders can be shipped.") : OrderStatus.Shipped;
 
-        Status = OrderStatus.Shipped;
-    }
+    public void MarkAsDelivered()
+        => Status = Status != OrderStatus.Shipped
+        ? throw new InvalidOperationException("Only shipped orders can be delivered.") : OrderStatus.Delivered;
 
-    public void MarkAsDelivered(string modifiedBy)
-    {
-        if (Status != OrderStatus.Shipped)
-        {
-            throw new InvalidOperationException("Only shipped orders can be delivered.");
-        }
-
-        Status = OrderStatus.Delivered;
-    }
-
-    public void Cancel(string modifiedBy)
-    {
-        if (Status is OrderStatus.Delivered or OrderStatus.Cancelled)
-        {
-            throw new InvalidOperationException("This order cannot be cancelled.");
-        }
-
-        Status = OrderStatus.Cancelled;
-    }
+    public void Cancel()
+        => Status = Status == OrderStatus.Delivered || Status == OrderStatus.Cancelled
+        ? throw new InvalidOperationException("This order cannot be cancelled.") : OrderStatus.Cancelled;
 }

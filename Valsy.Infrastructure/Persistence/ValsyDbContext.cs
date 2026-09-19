@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Valsy.Domain.Common;
 using Valsy.Domain.Customers;
 using Valsy.Domain.Orders;
@@ -46,13 +47,12 @@ public class ValsyDbContext : DbContext, IApplicationDbContext
     public DbSet<Customer> Customers { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
     public DbSet<OrderItem> OrderItems { get; set; } = default!;
-
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         await DispatchDomainEventsAsync(cancellationToken);
+        UpdateConcurrencyTokens(ChangeTracker);
         return await base.SaveChangesAsync(cancellationToken);
     }
-
     private async Task DispatchDomainEventsAsync(CancellationToken cancellationToken)
     {
         if (_publisher is null) return;
@@ -74,6 +74,25 @@ public class ValsyDbContext : DbContext, IApplicationDbContext
         foreach (var domainEvent in domainEvents)
         {
             await _publisher.Publish(domainEvent, cancellationToken);
+        }
+    }
+    private static void UpdateConcurrencyTokens(ChangeTracker changeTracker)
+    {
+        var entries = changeTracker
+            .Entries()
+            .Where(e =>
+                e.State == EntityState.Added ||
+                e.State == EntityState.Modified);
+
+        foreach (var entry in entries)
+        {
+            var property = entry.Metadata.FindProperty("RowVersion");
+
+            if (property is null)
+                continue;
+
+            entry.Property("RowVersion").CurrentValue =
+                Guid.NewGuid().ToByteArray();
         }
     }
 }

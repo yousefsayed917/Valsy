@@ -1,4 +1,4 @@
-using Valsy.Domain.Orders;
+using Valsy.Domain.Common.Enums;
 
 namespace Valsy.Application.Orders.Dtos;
 

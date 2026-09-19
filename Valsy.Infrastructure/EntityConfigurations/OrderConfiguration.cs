@@ -1,64 +1,109 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Valsy.Domain.Orders;
 
-namespace Valsy.Infrastructure.EntityConfigurations
+public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
-    public class OrderConfiguration : IEntityTypeConfiguration<Order>
+    public void Configure(EntityTypeBuilder<Order> builder)
     {
-        public void Configure(EntityTypeBuilder<Order> builder)
-        {
-            builder.ToTable("Order");
+        builder.ToTable("Order");
 
-            builder.HasKey(o => o.Id);
+        builder.HasKey(o => o.Id);
 
-            builder.Property(o => o.CustomerId).IsRequired();
+        builder.Property(o => o.Id)
+            .ValueGeneratedNever();
 
-            builder.HasOne(o => o.Customer)
-                .WithMany(c => c.Orders)
-                .HasForeignKey(o => o.CustomerId)
-                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Property(o => o.Status)
-                .HasConversion<int>()
-                .IsRequired();
+        // Customer
+        builder.Property(o => o.CustomerId)
+            .IsRequired();
 
-            builder.OwnsOne(o => o.Address, a =>
+        builder.HasOne(o => o.Customer)
+            .WithMany(c => c.Orders)
+            .HasForeignKey(o => o.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
+        // Status
+        builder.Property(o => o.Status)
+            .HasConversion<int>()
+            .IsRequired();
+
+        builder.HasIndex(o => o.Status);
+
+
+        // Shipping Address
+        builder.OwnsOne(
+            o => o.ShippingAddress,
+            address =>
             {
-                a.Property(x => x.AddressLine1)
+                address.Property(a => a.AddressLine1)
                     .HasColumnName("ShippingAddressLine1")
-                    .IsRequired()
-                    .HasMaxLength(250);
+                    .HasMaxLength(500)
+                    .IsRequired();
 
-                a.Property(x => x.City)
-                    .HasColumnName("ShippingCity")
-                    .IsRequired()
-                    .HasMaxLength(100);
+                address.Property(a => a.City)
+                    .HasColumnName("ShippingAddressCity")
+                    .HasMaxLength(100)
+                    .IsRequired();
 
-                a.Property(x => x.Country)
-                    .HasColumnName("ShippingCountry")
-                    .IsRequired()
-                    .HasMaxLength(100);
+                address.Property(a => a.Country)
+                    .HasColumnName("ShippingAddressCountry")
+                    .HasMaxLength(100)
+                    .IsRequired();
             });
 
-            builder.Property(o => o.ContactPhone)
-                .IsRequired()
-                .HasMaxLength(30);
 
-            builder.Ignore(o => o.TotalAmount);
+        // Contact Phone
+        builder.Property(o => o.ContactPhone)
+            .HasMaxLength(30)
+            .IsRequired();
 
-            builder.Property(o => o.CreatedAt).IsRequired();
-            builder.Property(o => o.CreatedBy).IsRequired().HasMaxLength(100);
-            builder.Property(o => o.LastModifiedAt);
-            builder.Property(o => o.LastModifiedBy).HasMaxLength(100);
 
-            builder.Property(p => p.RowVersion).IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
+        // Order Amounts
+        builder.Property(o => o.ItemsAmount)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
 
-            builder.HasMany(o => o.Items)
-                .WithOne()
-                .HasForeignKey(i => i.OrderId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
-        }
+        builder.Property(o => o.Discount)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
+
+        builder.Property(o => o.ShippingCost)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
+
+        builder.Property(o => o.TotalAmount)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
+
+
+        // Created At
+        builder.HasIndex(o => o.CreatedAt);
+
+
+        // Audit
+        builder.Property(o => o.CreatedBy)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        builder.Property(o => o.LastModifiedBy)
+            .HasMaxLength(100);
+
+        builder.Property(o => o.IsDeleted)
+            .IsRequired();
+
+        builder.Property(o => o.PromoCode)
+            .HasMaxLength(50);
+
+        // Row Version
+        builder.Property(o => o.RowVersion)
+            .IsRowVersion();
+
+
+        // Order Items
+        builder.HasMany(o => o.Items)
+            .WithOne()
+            .HasForeignKey(i => i.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

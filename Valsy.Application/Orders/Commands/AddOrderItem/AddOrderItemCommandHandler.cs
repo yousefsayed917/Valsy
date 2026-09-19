@@ -1,8 +1,6 @@
-using System.Linq.Expressions;
 using MediatR;
-using Valsy.Domain.Orders;
+using System.Linq.Expressions;
 using Valsy.Domain.Orders.Repository;
-using Valsy.Domain.Products;
 using Valsy.Domain.Products.Repository;
 
 namespace Valsy.Application.Orders.Commands.AddOrderItem;

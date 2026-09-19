@@ -21,23 +21,21 @@ public abstract class Entity<TId> : AuditableEntity, IEntity<TId>
         return Id.Equals(default(TId));
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        if (obj == null || !(obj is Entity<TId>))
+        if (obj is not Entity<TId> item)
             return false;
 
-        if (ReferenceEquals(this, obj))
+        if (ReferenceEquals(this, item))
             return true;
 
-        if (GetType() != obj.GetType())
+        if (GetType() != item.GetType())
             return false;
-
-        Entity<TId> item = (Entity<TId>)obj;
 
         if (item.IsTransient() || IsTransient())
             return false;
-        else
-            return false;//return item == this;
+
+        return EqualityComparer<TId>.Default.Equals(Id, item.Id);
     }
 
     public override int GetHashCode()

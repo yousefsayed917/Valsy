@@ -11,8 +11,7 @@ public abstract class AggregateRoot : AggregateRoot<int>
 public abstract class AggregateRoot<TPrimaryKey> : Entity<TPrimaryKey>, IAggregateRoot<TPrimaryKey>
 {
     [ConcurrencyCheck]
-    public byte[] RowVersion { get; set; }
-
+    public byte[] RowVersion { get; private set; } = [];
     private List<IDomainEvent> _domainEvents;
 
     /// <summary>

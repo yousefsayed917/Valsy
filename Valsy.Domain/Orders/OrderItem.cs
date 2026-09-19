@@ -6,8 +6,6 @@ namespace Valsy.Domain.Orders;
 public class OrderItem : Entity<int>
 {
     public int OrderId { get; private set; }
-    public int ProductId { get; private set; }
-    public Product Product { get; private set; } = null!;
     public int ProductVariantId { get; private set; }
     public ProductVariant ProductVariant { get; private set; } = null!;
     public string ProductName { get; private set; } = string.Empty;
@@ -21,7 +19,6 @@ public class OrderItem : Entity<int>
 
     internal static OrderItem Create(
         int orderId,
-        int productId,
         int productVariantId,
         string productName,
         string size,
@@ -33,7 +30,6 @@ public class OrderItem : Entity<int>
         var item = new OrderItem
         {
             OrderId = orderId,
-            ProductId = productId,
             ProductVariantId = productVariantId,
             ProductName = productName,
             Size = size,

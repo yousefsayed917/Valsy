@@ -27,9 +27,10 @@ public class Product : AggregateRoot<int>
     }
     public void AddVariant(string size, string color, int stock, string image)
     {
-        var variant = ProductVariant.Create(size, color, stock, image);
+        var variant = ProductVariant.Create( size, color, stock, image);
         Variants.Add(variant);
     }
+    
     public void AdjustVariantStock(int variantId, int newStock)
     {
         // 1. البحث عن الـ Variant داخل المنتج
