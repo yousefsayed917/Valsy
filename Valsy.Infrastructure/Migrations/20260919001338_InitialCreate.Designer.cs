@@ -11,7 +11,7 @@ using Valsy.Infrastructure;
 namespace Valsy.Infrastructure.Migrations
 {
     [DbContext(typeof(ValsyDbContext))]
-    [Migration("20260918232513_InitialCreate")]
+    [Migration("20260919001338_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -75,7 +75,7 @@ namespace Valsy.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("Valsy.Domain.Orders.Order", b =>
@@ -122,7 +122,7 @@ namespace Valsy.Infrastructure.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("Valsy.Domain.Orders.OrderItem", b =>
@@ -179,10 +179,16 @@ namespace Valsy.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.HasIndex("ProductVariantId")
+                        .IsUnique();
+
                     b.HasIndex("OrderId", "ProductVariantId")
                         .IsUnique();
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItem", (string)null);
                 });
 
             modelBuilder.Entity("Valsy.Domain.Products.Product", b =>
@@ -228,7 +234,7 @@ namespace Valsy.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Product", (string)null);
                 });
 
             modelBuilder.Entity("Valsy.Domain.Products.ProductVariant", b =>
@@ -277,7 +283,7 @@ namespace Valsy.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductVariants", (string)null);
+                    b.ToTable("ProductVariant", (string)null);
                 });
 
             modelBuilder.Entity("Valsy.Domain.Customers.Customer", b =>
@@ -307,7 +313,7 @@ namespace Valsy.Infrastructure.Migrations
 
                             b1.HasKey("CustomerId");
 
-                            b1.ToTable("Customers");
+                            b1.ToTable("Customer");
 
                             b1.WithOwner()
                                 .HasForeignKey("CustomerId");
@@ -349,7 +355,7 @@ namespace Valsy.Infrastructure.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("Order");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -367,6 +373,22 @@ namespace Valsy.Infrastructure.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Valsy.Domain.Products.Product", "Product")
+                        .WithOne()
+                        .HasForeignKey("Valsy.Domain.Orders.OrderItem", "ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Valsy.Domain.Products.ProductVariant", "ProductVariant")
+                        .WithOne()
+                        .HasForeignKey("Valsy.Domain.Orders.OrderItem", "ProductVariantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ProductVariant");
                 });
 
             modelBuilder.Entity("Valsy.Domain.Products.ProductVariant", b =>

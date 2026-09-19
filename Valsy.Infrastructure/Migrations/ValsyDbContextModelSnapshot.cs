@@ -176,9 +176,11 @@ namespace Valsy.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
-                    b.HasIndex("ProductVariantId");
+                    b.HasIndex("ProductVariantId")
+                        .IsUnique();
 
                     b.HasIndex("OrderId", "ProductVariantId")
                         .IsUnique();
@@ -370,14 +372,14 @@ namespace Valsy.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Valsy.Domain.Products.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                        .WithOne()
+                        .HasForeignKey("Valsy.Domain.Orders.OrderItem", "ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Valsy.Domain.Products.ProductVariant", "ProductVariant")
-                        .WithMany()
-                        .HasForeignKey("ProductVariantId")
+                        .WithOne()
+                        .HasForeignKey("Valsy.Domain.Orders.OrderItem", "ProductVariantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

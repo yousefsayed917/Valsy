@@ -37,13 +37,13 @@ namespace Valsy.Infrastructure.EntityConfigurations
             builder.Ignore(i => i.TotalPrice);
 
             builder.HasOne(i => i.Product)
-                .WithMany()
-                .HasForeignKey(i => i.ProductId)
+                .WithOne()
+                .HasForeignKey<OrderItem>(i => i.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(i => i.ProductVariant)
-                .WithMany()
-                .HasForeignKey(i => i.ProductVariantId)
+                .WithOne()
+                .HasForeignKey<OrderItem>(i => i.ProductVariantId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(i => i.CreatedAt).IsRequired();
